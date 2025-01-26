@@ -2,22 +2,30 @@
   "name": "wp-post-slideshow-block",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.php",
   "scripts": {
-    "build": "wp-scripts build",
+    "build": "wp-scripts build && grunt minify",
     "start": "wp-scripts start",
-    "grunt": "grunt build",
+    "grunt": "grunt minify",
     "watch": "grunt watch"
   },
   "dependencies": {
-    "@wordpress/scripts": "^25.0.0"
+    "@wordpress/scripts": "^30.9.0"
   },
   "devDependencies": {
     "grunt": "^1.6.1",
     "grunt-contrib-clean": "^2.0.0",
     "grunt-contrib-cssmin": "^4.0.0",
     "grunt-contrib-uglify": "^5.0.0",
-    "grunt-contrib-watch": "^1.1.0"
+    "grunt-contrib-watch": "^1.1.0",
+    "prettier": "npm:wp-prettier@2.2.1-beta-1",
+    "wp-prettier": "^2.2.1-beta-1"
+  },
+  "@wordpress/scripts": {
+    "build": {
+      "input": "src/js/block.js",
+      "outputPath": "dist/js"
+    }
   },
   "repository": {
     "type": "git",
