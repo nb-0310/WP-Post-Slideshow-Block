@@ -1,0 +1,32 @@
+{
+  "name": "wp-post-slideshow-block",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start",
+    "grunt": "grunt build",
+    "watch": "grunt watch"
+  },
+  "dependencies": {
+    "@wordpress/scripts": "^25.0.0"
+  },
+  "devDependencies": {
+    "grunt": "^1.6.1",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-cssmin": "^4.0.0",
+    "grunt-contrib-uglify": "^5.0.0",
+    "grunt-contrib-watch": "^1.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nb-0310/WP-Post-Slideshow-Block.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nb-0310/WP-Post-Slideshow-Block/issues"
+  },
+  "homepage": "https://github.com/nb-0310/WP-Post-Slideshow-Block#readme"
+}
