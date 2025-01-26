@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function spb_enqueue_block_assets() {
     wp_enqueue_script(
         'post-slideshow-block-js',
-        plugins_url( 'dist/js/block.js', __FILE__ ),
+        plugins_url( 'dist/block.js', __FILE__ ),
         [ 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-data' ],
         '1.0.0',
         true
@@ -21,16 +21,16 @@ function spb_enqueue_block_assets() {
 
     wp_enqueue_style(
         'post-slideshow-block-css',
-        plugins_url( 'dist/css/block.css', __FILE__ ),
+        plugins_url( 'dist/block.css', __FILE__ ),
         [],
         '1.0.0'
     );
 
     wp_register_script(
         'post-slideshow-block-frontend',
-        plugins_url( '/dist/js/render.js', __FILE__ ),
+        plugins_url( '/dist/render.js', __FILE__ ),
         array( 'wp-element' ),
-        filemtime( plugin_dir_path( __FILE__ ) . '/dist/js/render.js' ),
+        filemtime( plugin_dir_path( __FILE__ ) . '/dist/render.js' ),
         true
     );
 

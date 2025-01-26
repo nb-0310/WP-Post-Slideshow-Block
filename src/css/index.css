@@ -1,35 +1,46 @@
-.slideshow {
-  display: flex;
+.slider-container {
+  position: relative;
   overflow: hidden;
   width: 100%;
 }
 
-.slide {
-  flex: 1 0 100%;
-  transition: transform 0.5s ease;
+.slider .slides {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  transition: transform 0.3s ease-in-out;
 }
 
-.slide img {
-  max-width: 100%;
-  height: auto;
+.slider .slide {
+  flex: 0 0 100%;
+  display: none;
+}
+
+.slider .slide.active {
+  display: block;
+}
+
+.slide-image {
+  width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
 }
 
 .controls {
+  width: 100%;
   display: flex;
-  justify-content: center;
-  margin-top: 10px;
+  justify-content: space-between;
 }
 
-button {
-  margin: 0 5px;
+.prev-btn,
+.next-btn {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
 }
 
-@media (max-width: 768px) {
-  .slideshow {
-      flex-direction: column;
-  }
+.prev-btn:hover,
+.next-btn:hover {
+  background-color: rgba(0, 0, 0, 0.8);
 }

@@ -7,7 +7,7 @@ module.exports = {
     'render': './src/js/render.js'
   },
   output: {
-    path: __dirname + '/dist/js',
+    path: __dirname + '/dist/',
     filename: '[name].js',
   },
 };
