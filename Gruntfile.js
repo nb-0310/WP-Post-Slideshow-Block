@@ -4,21 +4,41 @@ module.exports = function (grunt) {
   
 	  // Minify JavaScript
 	  uglify: {
-		build: {
-		  files: {
-			'dist/js/block.min.js': ['src/js/block.js']
-		  }
-		}
-	  },
+		js: {
+			options: {
+				compress: {
+					drop_console: true, // <-
+				},
+			},
+			files: [
+				{
+					expand: true,
+					cwd: 'dist/js',
+					src: [ '*.js', '!*.min.js' ],
+					dest: 'dist/js',
+					ext: '.min.js',
+				},
+			],
+		},
+	},
   
 	  // Minify CSS
 	  cssmin: {
-		build: {
-		  files: {
-			'dist/css/block.min.css': ['src/css/index.css']
-		  }
-		}
-	  },
+		options: {
+			keepSpecialComments: 0,
+		},
+		css: {
+			files: [
+				{
+					expand: true,
+					cwd: 'dist/css',
+					src: [ '*.css', '!*.min.css', '!blocks/*.css' ],
+					dest: 'dist/css',
+					ext: '.min.css',
+				},
+			],
+		},
+	},
   
 	  // Watch files for changes
 	  watch: {

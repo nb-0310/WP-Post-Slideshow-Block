@@ -1,6 +1,35 @@
-/* $primary-color: #0073aa; */
+.slideshow {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+}
 
-.block-editor-block-list__block {
-  border: 1px solid #0073aa !important;
-  padding: 1rem;
+.slide {
+  flex: 1 0 100%;
+  transition: transform 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide img {
+  max-width: 100%;
+  height: auto;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+button {
+  margin: 0 5px;
+}
+
+@media (max-width: 768px) {
+  .slideshow {
+      flex-direction: column;
+  }
 }

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.php",
   "scripts": {
-    "build": "wp-scripts build && grunt minify",
+    "build": "wp-scripts build",
     "start": "wp-scripts start",
     "grunt": "grunt minify",
     "watch": "grunt watch"
@@ -13,13 +13,14 @@
     "@wordpress/scripts": "^30.9.0"
   },
   "devDependencies": {
+    "@wordpress/prettier-config": "^4.16.0",
     "grunt": "^1.6.1",
     "grunt-contrib-clean": "^2.0.0",
     "grunt-contrib-cssmin": "^4.0.0",
     "grunt-contrib-uglify": "^5.0.0",
     "grunt-contrib-watch": "^1.1.0",
-    "prettier": "npm:wp-prettier@2.2.1-beta-1",
-    "wp-prettier": "^2.2.1-beta-1"
+    "prettier": "@wordpress/prettier-config",
+    "wp-prettier": "^3.0.3"
   },
   "@wordpress/scripts": {
     "build": {
