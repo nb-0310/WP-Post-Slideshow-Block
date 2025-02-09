@@ -1,0 +1,110 @@
+# Copyright (C) 2025 Nirzar Bhatt
+# This file is distributed under the same license as the Post Slideshow plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Post Slideshow 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-post-slideshow-block\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-02-09T19:11:03+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: post-slideshow-block\n"
+
+#. Plugin Name of the plugin
+#: wp-post-slideshow-block.php
+msgid "Post Slideshow"
+msgstr ""
+
+#. Description of the plugin
+#: wp-post-slideshow-block.php
+msgid "A custom Gutenberg block for creating beautiful and responsive slideshows."
+msgstr ""
+
+#. Author of the plugin
+#: wp-post-slideshow-block.php
+msgid "Nirzar Bhatt"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Unknown Author"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Error fetching posts:"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Edit URL"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Slideshow Settings"
+msgstr ""
+
+#: dist/block.js:1
+msgid "API URL"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Enter the API URL to fetch posts from."
+msgstr ""
+
+#: dist/block.js:1
+msgid "Load Slideshow"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Enable Autoplay"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Content Display"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Show Title"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Show Categories"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Show Tags"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Show Author"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Show Excerpt"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Layout Settings"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Items in View"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Enter URL"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Done"
+msgstr ""
+
+#: dist/block.js:1
+msgid "Loading..."
+msgstr ""
+
+#: dist/block.js:1
+msgid "Read More"
+msgstr ""
