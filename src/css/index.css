@@ -1,46 +1,120 @@
+* {
+	box-sizing: border-box;
+}
+
 .slider-container {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
+	position: relative;
+	overflow: hidden;
+	width: 100%;
 }
 
-.slider .slides {
-  display: flex;
-  transition: transform 0.3s ease-in-out;
+.slides-container {
+	overflow: hidden;
+	width: 100%;
+	position: relative;
 }
 
-.slider .slide {
-  flex: 0 0 100%;
-  display: none;
+.slides {
+	display: flex;
+	transition: transform 0.3s ease-in-out;
+	width: 100%;
 }
 
-.slider .slide.active {
-  display: block;
+.slide {
+	transition: transform 0.3s ease;
+	flex: none;
+	text-wrap: wrap;
+	padding: 4px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	background-size: cover;
+	background-position: center;
+}
+
+.slide-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .slide-image {
-  width: 100%;
-  height: 200px;
-  background-size: cover;
-  background-position: center;
+	width: 100%;
+	background-size: cover;
+	background-position: center;
+	position: relative;
 }
+  
 
 .controls {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: none;
 }
 
 .prev-btn,
 .next-btn {
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
+    background: transparent;
+    color: black;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    pointer-events: all;
 }
 
 .prev-btn:hover,
 .next-btn:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+	background: rgba(0, 0, 0, 0.5);
+	color: whitesmoke;
+}
+
+.categories {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tags {
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.meta-info {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	margin: 5px 0;
+}
+
+.meta-icon {
+	font-size: 16px;
+	color: #555;
+}
+
+.meta-text {
+	font-size: 14px;
+	color: #333;
+}
+
+.cta {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.cta:hover {
+    background-color: #333;
 }

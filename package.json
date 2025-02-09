@@ -7,20 +7,23 @@
     "build": "wp-scripts build",
     "start": "wp-scripts start",
     "grunt": "grunt minify",
-    "watch": "grunt watch"
+    "watch": "grunt watch",
+    "format": "prettier --write '**/*.{js,jsx,scss,css}' && eslint --fix '**/*.{js,jsx}'"
   },
   "dependencies": {
+    "@wordpress/components": "^29.3.0",
+    "@wordpress/i18n": "^5.17.0",
+    "@wordpress/icons": "^10.17.0",
     "@wordpress/scripts": "^30.9.0"
   },
   "devDependencies": {
-    "@wordpress/prettier-config": "^4.16.0",
+    "@wordpress/eslint-plugin": "^22.3.0",
+    "@wordpress/prettier-config": "^4.17.0",
     "grunt": "^1.6.1",
     "grunt-contrib-clean": "^2.0.0",
     "grunt-contrib-cssmin": "^4.0.0",
     "grunt-contrib-uglify": "^5.0.0",
-    "grunt-contrib-watch": "^1.1.0",
-    "prettier": "@wordpress/prettier-config",
-    "wp-prettier": "^3.0.3"
+    "grunt-contrib-watch": "^1.1.0"
   },
   "@wordpress/scripts": {
     "build": {

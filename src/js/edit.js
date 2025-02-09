@@ -1,170 +1,311 @@
-import { useState, useEffect, useRef } from "@wordpress/element";
-import { TextControl, Button, ToggleControl } from "@wordpress/components";
-import { InspectorControls, BlockControls } from "@wordpress/block-editor";
-import { ToolbarGroup, ToolbarButton } from "@wordpress/components";
+import { __ } from '@wordpress/i18n';
+import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
+import { PanelBody, PanelRow, TextControl, ToggleControl, RangeControl, Button } from '@wordpress/components';
+import { InspectorControls, BlockControls, useBlockProps } from '@wordpress/block-editor';
+import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import { Icon, category, tag, postAuthor, arrowRight, arrowLeft } from '@wordpress/icons';
 import '../css/index.css';
 
 const Edit = (props) => {
-  const { attributes, setAttributes } = props;
-  const [isEditing, setIsEditing] = useState(!attributes.url);
-  const [url, setUrl] = useState(attributes.url || "");
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showTitle, setShowTitle] = useState(true);
-  const [showExcerpt, setShowExcerpt] = useState(false);
+	const { attributes, setAttributes } = props;
+	const { url, showTitle, showExcerpt, itemsInView } = attributes;
+	const [isEditing, setIsEditing] = useState(!url);
+	const [posts, setPosts] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
+	const [currentIndex, setCurrentIndex] = useState(0);
 
-  const sliderRef = useRef();
+	const blockProps = useBlockProps();
+	const slideImageRef = useRef(null);
+	const controlsRef = useRef(null);
 
-  const handleUrlChange = (newUrl) => {
-    setAttributes({ url: newUrl });
-    setUrl(newUrl);
-  };
+	const handleUrlChange = useCallback((newUrl) => {
+		setAttributes({ url: newUrl });
+	}, []);
 
-  const handleDoneClick = () => {
-    setIsEditing(false);
-    fetchPosts(url);
-  };
+	const handleDoneClick = useCallback(() => {
+		setIsEditing(false);
+		fetchPosts(url);
+	}, [url]);
 
-  const fetchPosts = async (apiUrl) => {
-    if (!apiUrl) return;
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${apiUrl}/wp-json/wp/v2/posts`);
-      const postsData = await response.json();
+	const fetchPosts = async (apiUrl) => {
+		if (!apiUrl) return;
+		setIsLoading(true);
+		try {
+			const response = await fetch(`${apiUrl}/wp-json/wp/v2/posts?_embed`);
+			const postsData = await response.json();
 
-      // Fetch featured media details
-      const postsWithMedia = await Promise.all(
-        postsData.map(async (post) => {
-          const mediaResponse = await fetch(
-            `${apiUrl}/wp-json/wp/v2/media/${post.featured_media}`
-          );
-          const mediaData = await mediaResponse.json();
-          return {
-            ...post,
-            featured_media_url: mediaData.source_url,
-          };
-        })
-      );
+			const postsWithDetails = postsData.map((post) => {
+				const featured_media_url = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+				const categories =
+					post._embedded?.['wp:term']?.find((terms) => terms.some((term) => term.taxonomy === 'category')) ||
+					[];
+				const tags =
+					post._embedded?.['wp:term']?.find((terms) => terms.some((term) => term.taxonomy === 'post_tag')) ||
+					[];
+				const author = post._embedded?.author?.[0]?.name || __('Unknown Author', 'post-slideshow-block');
 
-      setPosts(postsWithMedia);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+				return {
+					...post,
+					featured_media_url,
+					categories: categories.map((cat) => cat.name),
+					tags: tags.map((tag) => tag.name),
+					author,
+				};
+			});
 
-  useEffect(() => {
-    if (url) {
-      fetchPosts(url);
-    }
-  }, [url]);
+			setPosts(postsWithDetails);
+		} catch (error) {
+			console.error(__('Error fetching posts:', 'post-slideshow-block'), error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-  const goToNext = () => {
-    if (currentIndex < posts.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      setCurrentIndex(0);
-    }
-  };
+	const goToNext = useCallback(() => {
+		const maxIndex = Math.max(0, posts.length - itemsInView);
+		setCurrentIndex((prevIndex) => (prevIndex < maxIndex ? prevIndex + 1 : 0));
+	}, [posts.length, itemsInView]);
 
-  const goToPrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    } else {
-      setCurrentIndex(posts.length - 1);
-    }
-  };
+	const goToPrev = useCallback(() => {
+		const maxIndex = Math.max(0, posts.length - itemsInView);
+		setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : maxIndex));
+	}, [posts.length, itemsInView]);
 
-  return (
-    <div>
-      {/* Block Controls (Toolbar Button for Editing URL) */}
-      <BlockControls>
-        <ToolbarGroup>
-          <ToolbarButton
-            icon="edit"
-            label="Edit URL"
-            onClick={() => setIsEditing(true)}
-          />
-        </ToolbarGroup>
-      </BlockControls>
+	const stripHTML = (html) => {
+		const doc = new DOMParser().parseFromString(html, 'text/html');
+		return doc.body.textContent || '';
+	};
 
-      {/* Inspector Controls (for URL input) */}
-      <InspectorControls>
-        <TextControl
-          label="API URL"
-          value={url}
-          onChange={(newUrl) => setUrl(newUrl)}
-        />
-        <Button onClick={() => fetchPosts(url)} disabled={isLoading}>
-          {isLoading ? "Loading..." : "Load Slideshow"}
-        </Button>
-        <ToggleControl
-          label="Show Title"
-          checked={showTitle}
-          onChange={() => setShowTitle(!showTitle)}
-        />
-        <ToggleControl
-          label="Show Excerpt"
-          checked={showExcerpt}
-          onChange={() => setShowExcerpt(!showExcerpt)}
-        />
-      </InspectorControls>
+	useEffect(() => {
+		if (url) {
+			fetchPosts(url);
+		}
+	}, [url]);
 
-      {/* Editor Content */}
-      {isEditing ? (
-        <div>
-          <TextControl
-            label="Enter URL"
-            value={url}
-            onChange={handleUrlChange}
-          />
-          <Button isPrimary onClick={handleDoneClick}>
-            Done
-          </Button>
-        </div>
-      ) : isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <div className="slider-container">
-          {posts.length > 0 ? (
-            <div className="slider" ref={sliderRef}>
-              <div className="slides">
-                {posts.map((post, index) => (
-                  <div
-                    className={`slide ${index === currentIndex ? "active" : ""}`}
-                    key={post.id}
-                  >
-                    <a href={post.link} target="_blank" rel="noopener noreferrer">
-                      <div
-                        className="slide-image"
-                        style={{
-                          backgroundImage: `url(${post.featured_media_url})`,
-                        }}
-                      />
-                      {showTitle && <h3>{post.title.rendered}</h3>}
-                      {showExcerpt && <p>{post.excerpt.rendered}</p>}
-                    </a>
-                  </div>
-                ))}
-              </div>
-              <div className="controls">
-                <button onClick={goToPrev} className="prev-btn">
-                  Prev
-                </button>
-                <button onClick={goToNext} className="next-btn">
-                  Next
-                </button>
-              </div>
-            </div>
-          ) : (
-            <p>No posts found.</p>
-          )}
-        </div>
-      )}
-    </div>
-  );
+	useEffect(() => {
+		if (slideImageRef.current && controlsRef.current) {
+			const imageCoordinates = slideImageRef.current.getBoundingClientRect();
+			controlsRef.current.style.top = `${imageCoordinates.height / 2}px`;
+		}
+	}, [posts, isLoading]);
+
+	useEffect(() => {
+		let interval;
+
+		if (attributes.autoPlay && posts.length > 0) {
+			interval = setInterval(() => {
+				goToNext();
+			}, 1200);
+		}
+
+		return () => {
+			if (interval) {
+				clearInterval(interval);
+			}
+		};
+	}, [attributes.autoPlay, posts.length, goToNext]);
+
+	return (
+		<div {...blockProps}>
+			<BlockControls>
+				<ToolbarGroup>
+					<ToolbarButton icon="edit" label={__('Edit URL', 'post-slideshow-block')} onClick={() => setIsEditing(true)} />
+				</ToolbarGroup>
+			</BlockControls>
+
+			<InspectorControls>
+				<PanelBody title={__('Slideshow Settings', 'post-slideshow-block')} initialOpen={true}>
+					<PanelRow>
+						<TextControl
+							label={__('API URL', 'post-slideshow-block')}
+							value={url}
+							onChange={handleUrlChange}
+							help={__('Enter the API URL to fetch posts from.', 'post-slideshow-block')}
+							placeholder="https://rtcamp.com/"
+						/>
+					</PanelRow>
+
+					{isEditing && (
+						<PanelRow>
+							<Button isPrimary onClick={handleDoneClick} disabled={isLoading}>
+								{__('Load Slideshow', 'post-slideshow-block')}
+							</Button>
+						</PanelRow>
+					)}
+
+					<PanelRow>
+						<ToggleControl
+							label={__('Enable Autoplay', 'post-slideshow-block')}
+							checked={attributes.autoPlay}
+							onChange={() => setAttributes({ autoPlay: !attributes.autoPlay })}
+						/>
+					</PanelRow>
+				</PanelBody>
+
+				<PanelBody title={__('Content Display', 'post-slideshow-block')} initialOpen={true}>
+					<PanelRow>
+						<ToggleControl
+							label={__('Show Title', 'post-slideshow-block')}
+							checked={attributes.showTitle}
+							onChange={() => setAttributes({ showTitle: !attributes.showTitle })}
+						/>
+					</PanelRow>
+					<PanelRow>
+						<ToggleControl
+							label={__('Show Categories', 'post-slideshow-block')}
+							checked={attributes.showCategories}
+							onChange={() => setAttributes({ showCategories: !attributes.showCategories })}
+						/>
+					</PanelRow>
+					<PanelRow>
+						<ToggleControl
+							label={__('Show Tags', 'post-slideshow-block')}
+							checked={attributes.showTags}
+							onChange={() => setAttributes({ showTags: !attributes.showTags })}
+						/>
+					</PanelRow>
+					<PanelRow>
+						<ToggleControl
+							label={__('Show Author', 'post-slideshow-block')}
+							checked={attributes.showAuthor}
+							onChange={() => setAttributes({ showAuthor: !attributes.showAuthor })}
+						/>
+					</PanelRow>
+					<PanelRow>
+						<ToggleControl
+							label={__('Show Excerpt', 'post-slideshow-block')}
+							checked={attributes.showExcerpt}
+							onChange={() => setAttributes({ showExcerpt: !attributes.showExcerpt })}
+						/>
+					</PanelRow>
+				</PanelBody>
+
+				<PanelBody title={__('Layout Settings', 'post-slideshow-block')} initialOpen={true}>
+					<RangeControl
+						label={__('Items in View', 'post-slideshow-block')}
+						value={itemsInView}
+						onChange={(value) => setAttributes({ itemsInView: value })}
+						min={1}
+						max={3}
+						step={1}
+						marks
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+					/>
+				</PanelBody>
+			</InspectorControls>
+
+			{isEditing ? (
+				<div>
+					<TextControl
+						label={__('Enter URL', 'post-slideshow-block')}
+						value={url}
+						onChange={handleUrlChange}
+						placeholder="https://rtcamp.com/"
+					/>
+					<Button isPrimary onClick={handleDoneClick}>
+						{__('Done', 'post-slideshow-block')}
+					</Button>
+				</div>
+			) : isLoading ? (
+				<p>{__('Loading...', 'post-slideshow-block')}</p>
+			) : (
+				<div className="slides-container">
+					<div
+						className="slides"
+						style={{
+							transform: `translateX(-${(currentIndex * 100) / itemsInView}%)`,
+						}}
+					>
+						{posts.map((post, index) => (
+							<div
+								className={`slide ${
+									index >= currentIndex && index < currentIndex + itemsInView ? 'active' : ''
+								}`}
+								key={post.id}
+								style={{
+									width: `${100 / itemsInView}%`,
+								}}
+							>
+								<div
+									ref={slideImageRef}
+									className="slide-image"
+									style={{
+										backgroundImage: `url(${post.featured_media_url})`,
+										height: `${itemsInView === 1 ? 400 : itemsInView === 2 ? 300 : 200}px`,
+									}}
+								/>
+
+								<div className="slide-content">
+									{showTitle && (
+										<h3
+											style={{
+												fontSize: `${Math.max(12, 22 - itemsInView * 2)}px`,
+											}}
+										>
+											{stripHTML(post.title.rendered)}
+										</h3>
+									)}
+
+									{attributes.showCategories && post.categories.length > 0 && (
+										<div className="meta-info">
+											<Icon icon={category} />
+											{post.categories.map((category) => (
+												<span key={category} className="meta-text">
+													{category}
+												</span>
+											))}
+										</div>
+									)}
+
+									{attributes.showTags && post.tags.length > 0 && (
+										<div className="meta-info">
+											<Icon icon={tag} />
+											{post.tags.map((tag) => (
+												<span key={tag} className="meta-text">
+													{tag}
+												</span>
+											))}
+										</div>
+									)}
+
+									{showExcerpt && (
+										<p
+											style={{
+												fontSize: `${Math.max(12, 20 - itemsInView * 2)}px`,
+											}}
+										>
+											{stripHTML(post.excerpt.rendered)}
+										</p>
+									)}
+
+									{attributes.showAuthor && (
+										<div className="meta-info">
+											<Icon icon={postAuthor} />
+											<span className="meta-text">{post.author}</span>
+										</div>
+									)}
+								</div>
+
+								<a href={post.link} target="_blank" rel="noopener noreferrer" className="post-link">
+									<button className="cta">{__('Read More', 'post-slideshow-block')}</button>
+								</a>
+							</div>
+						))}
+					</div>
+
+					<div ref={controlsRef} className="controls">
+						<button onClick={goToPrev} className="prev-btn">
+							<Icon icon={arrowLeft} />
+						</button>
+						<button onClick={goToNext} className="next-btn">
+							<Icon icon={arrowRight} />
+						</button>
+					</div>
+				</div>
+			)}
+		</div>
+	);
 };
 
 export default Edit;
